@@ -1,4 +1,4 @@
-package com.tushar.api_management_service.security;
+package com.tushar.audit_service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -57,22 +56,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = claims.getSubject();
             String role = claims.get("role", String.class);
 
-            System.out.println("JWT USERNAME = " + username);
-            System.out.println("JWT ROLE = " + role);
-
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             username,
                             null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                            List.of(
+                                    new SimpleGrantedAuthority(
+                                            "ROLE_" + role
+                                    )
+                            )
                     );
 
-            SecurityContextHolder.getContext()
+            org.springframework.security.core.context.SecurityContextHolder
+                    .getContext()
                     .setAuthentication(authentication);
 
         } catch (Exception e) {
-            System.out.println("JWT validation failed: " + e.getMessage());
-            SecurityContextHolder.clearContext();
+            org.springframework.security.core.context.SecurityContextHolder
+                    .clearContext();
         }
 
         filterChain.doFilter(request, response);

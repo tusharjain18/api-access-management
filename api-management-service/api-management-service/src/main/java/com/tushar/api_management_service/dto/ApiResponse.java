@@ -1,7 +1,8 @@
 package com.tushar.api_management_service.dto;
 
-public class ApiResponse {
+import java.io.Serializable;
 
+public class ApiResponse implements Serializable {
     private Long id;
     private String name;
     private String baseUrl;
